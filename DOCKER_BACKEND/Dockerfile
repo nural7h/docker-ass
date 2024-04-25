@@ -10,5 +10,5 @@ RUN mvn -B package --file pom.xml -DskipTests
 FROM eclipse-temurin:17-jre-alpine
 # Expose port 8080
 EXPOSE 8080
-COPY --from=build /app/target/doc-ass.jar doc-ass.jar
-ENTRYPOINT ["java","-jar","doc-ass.jar"]
+COPY --from=build /app/target/doc-ass-0.0.1-SNAPSHOT.jar doc-ass-0.0.1-SNAPSHOT.jar
+ENTRYPOINT ["java","-jar","doc-ass-0.0.1-SNAPSHOT.jar"]
