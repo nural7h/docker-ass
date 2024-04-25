@@ -1,10 +1,8 @@
-echo "Stopping and removing existing docker_database container if it exists..."
-docker stop $(docker ps -aq --filter name=docker_database)
-docker rm $(docker ps -aq --filter name=docker_database)
-
-echo "Removing existing docker_database image if it exists..."
-docker rmi -f docker_database
+echo "Stopping old container if exists..."
+docker stop my_docker_ass_database_container
+echo "Removing old container if exists..."
+docker rm my_docker_ass_database_container
 
 echo "Running Dockerfile..."
 docker build -t docker_database .
-docker run -p 5432:5432 docker_database
+docker run -p 5432:5432 --name my_docker_ass_database_container docker_database
