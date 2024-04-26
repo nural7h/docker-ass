@@ -1,4 +1,5 @@
 package viadoc.docass.Todo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -7,6 +8,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/todo")
+@CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = "Access-Control-Allow-Origin")
 public class TodoController {
 
     private final TodoService todoService;
@@ -17,13 +19,14 @@ public class TodoController {
     }
 
     @PostMapping
-    public void addTodo(@RequestBody Todo todo){
-        todoService.addTodo(todo);
+    public Todo addTodo(@RequestBody Todo todo) {
+        Todo addedTodo = todoService.addTodo(todo);
+        return addedTodo;
     }
 
     @GetMapping()
     @ResponseBody
-    public List<Todo> getAllTodos(){
+    public List<Todo> getAllTodos() {
         return todoService.getAllTodos();
     }
 }

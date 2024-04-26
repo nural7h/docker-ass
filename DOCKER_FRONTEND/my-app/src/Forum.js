@@ -1,61 +1,79 @@
 // src/Forum.js
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Forum = () => {
-  const [posts, setPosts] = useState([
-  { id: 1, title: 'Do backend' },
-  { id: 2, title: 'Do fronend' },
-  { id: 3, title: 'Do databse' },]);
-  const [newTodo, setNewTodo] = useState('');
+	const [todos, setTodos] = useState([]);
+	const [newTodoTitle, setNewTodoTitle] = useState("");
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get('https://your-api-endpoint.com/posts');
-        setPosts(response.data);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    };
+	const BASE_TODO_URL = "http://localhost:8080/api/v1/todo";
 
-    fetchPosts();
-  }, []);
+	const addTodo = async (title) => {
+		try {
+			const options = {
+				headers: {
+					"Access-Control-Allow-Origin": "*",
+				},
+			};
+			const response = await axios.post(
+				BASE_TODO_URL,
+				{ title },
+				options
+			);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('https://your-api-endpoint.com/posts', {
-        title: newTodo,
-        // Additional fields if needed
-      });
-      setPosts([...posts, response.data]); // Add the new post to the state
-      setNewTodo(''); // Clear the input field
-    } catch (error) {
-      console.error('Error creating post:', error);
-    }
-  };
+			setTodos([...todos, response.data]);
+			setNewTodoTitle("");
+		} catch (error) {
+			console.error("Error creating post:", error);
+		}
+	};
 
-  return (
-    <div>
-      <h1>Forum Posts</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          placeholder="Add a new to-do item"
-        />
-        <button type="submit">Add</button>
-      </form>
-      <ul>
-        {posts.map(post => (
-          <li key={post.id}>{post.title}</li>
-        ))}
-      </ul>
-    </div>
-  );
+	useEffect(() => {
+		const fetchTodos = async () => {
+			try {
+				const options = {
+					headers: {
+						"Access-Control-Allow-Origin": "*",
+					},
+				};
+				const response = await axios.get(BASE_TODO_URL, options);
+				setTodos(response.data);
+				console.log("response", response.data);
+			} catch (error) {
+				console.error("Error fetching posts:", error);
+			}
+		};
+
+		fetchTodos();
+	}, [setTodos]);
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		await addTodo(newTodoTitle);
+	};
+
+	return (
+		<div>
+			<h1>Forum Posts</h1>
+			<form onSubmit={handleSubmit}>
+				<input
+					type="text"
+					value={newTodoTitle}
+					onChange={(e) => setNewTodoTitle(e.target.value)}
+					placeholder="Add a new to-do item"
+				/>
+				<button type="submit">Add</button>
+			</form>
+			<ul>
+				{todos.map((todo) => (
+					<li key={todo.id}>
+						{todo.id} | {todo.title}
+					</li>
+				))}
+			</ul>
+		</div>
+	);
 };
 
 export default Forum;

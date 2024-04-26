@@ -15,13 +15,13 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-
-    public void addTodo(Todo todo) {
+    public Todo addTodo(Todo todo) {
         Optional<Todo> a = todoRepository.findById(todo.getId());
-        if (a.isPresent()){
+        if (a.isPresent()) {
             throw new IllegalStateException("Id already exists. ");
         }
-        todoRepository.save(todo);
+        Todo addedTodo = todoRepository.save(todo);
+        return addedTodo;
     }
 
     public List<Todo> getAllTodos() {
