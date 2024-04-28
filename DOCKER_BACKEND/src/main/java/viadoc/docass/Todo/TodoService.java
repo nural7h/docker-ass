@@ -18,7 +18,7 @@ public class TodoService {
     public Todo addTodo(Todo todo) {
         Optional<Todo> a = todoRepository.findById(todo.getId());
         if (a.isPresent()) {
-            throw new IllegalStateException("Id already exists. ");
+            throw new IllegalStateException("Todo already exists. ");
         }
         Todo addedTodo = todoRepository.save(todo);
         return addedTodo;
