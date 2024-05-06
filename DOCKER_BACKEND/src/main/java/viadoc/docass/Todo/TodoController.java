@@ -21,6 +21,7 @@ public class TodoController {
     @PostMapping
     public Todo addTodo(@RequestBody Todo todo) {
         Todo addedTodo = todoService.addTodo(todo);
+        System.out.println("Added todo: " + addedTodo.getTitle() + " " + addedTodo.getId());
         return addedTodo;
     }
 
