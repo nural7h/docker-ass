@@ -1,0 +1,47 @@
+version: "6.9"
+services:
+  docker_database_service:
+    restart: always
+    build:
+      context: ./DOCKER_DATABASE
+    container_name: composed_docker_database
+    ports:
+      - "5455:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: my_docker_ass_database
+  
+  docker_backend_service:
+    build:
+      context: ./DOCKER_BACKEND
+      
+    container_name: composed_docker_backend
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - docker_database_service
+    
+    environment:
+      - spring.datasource.url=jdbc:postgresql://host.docker.internal:5455/my_docker_ass_database
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.application.name=doc-ass
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+      - spring.jpa.hibernate.ddl-auto=update
+    
+  docker_frontend_service:
+    build:
+      context: ./DOCKER_FRONTEND/my-app
+
+    ports:
+      - "3000:3000"
+
+    container_name: composed_docker_frontend
+
+
+
+
+
