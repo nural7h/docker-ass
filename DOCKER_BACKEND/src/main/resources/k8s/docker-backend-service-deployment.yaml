@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: docker-backend-service
+  name: docker-backend-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: docker-backend-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/docker-ass-default: "true"
+        io.kompose.service: docker-backend-service
+    spec:
+      containers:
+        - env:
+            - name: spring.application.name
+              value: doc-ass
+            - name: spring.datasource.password
+              value: postgres
+            - name: spring.datasource.url
+              value: jdbc:postgresql://host.docker.internal:5455/my_docker_ass_database
+            - name: spring.datasource.username
+              value: postgres
+            - name: spring.jpa.hibernate.ddl-auto
+              value: update
+            - name: spring.jpa.properties.hibernate.dialect
+              value: org.hibernate.dialect.PostgreSQLDialect
+          image: docker-backend-service
+          name: composed-docker-backend
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+      restartPolicy: Always

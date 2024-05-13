@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: docker-database-service
+  name: docker-database-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: docker-database-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/docker-ass-default: "true"
+        io.kompose.service: docker-database-service
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: my_docker_ass_database
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+          image: docker-database-service
+          name: composed-docker-database
+          ports:
+            - containerPort: 5432
+              hostPort: 5455
+              protocol: TCP
+      restartPolicy: Always
