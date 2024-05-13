@@ -1,4 +1,4 @@
-version: "6.9"
+version: "3.8"
 services:
   docker_database_service:
     restart: always
@@ -35,6 +35,9 @@ services:
   docker_frontend_service:
     build:
       context: ./DOCKER_FRONTEND/my-app
+
+    depends_on:
+      - docker_backend_service
 
     ports:
       - "3000:3000"
