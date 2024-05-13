@@ -36,6 +36,9 @@ services:
     build:
       context: ./DOCKER_FRONTEND/my-app
 
+    depends_on:
+      - docker_backend_service
+
     ports:
       - "3000:3000"
 
