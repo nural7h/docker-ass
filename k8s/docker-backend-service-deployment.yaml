@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert
+    kompose.cmd: kompose convert -o ./k8s
     kompose.version: 1.32.0 (765fde254)
   labels:
     io.kompose.service: docker-backend-service
@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert
+        kompose.cmd: kompose convert -o ./k8s
         kompose.version: 1.32.0 (765fde254)
       labels:
         io.kompose.network/docker-ass-default: "true"
@@ -23,19 +23,19 @@ spec:
     spec:
       containers:
         - env:
-            - name: spring.application.name
+            - name: SPRING_APPLICATION_NAME
               value: doc-ass
-            - name: spring.datasource.password
+            - name: SPRING_DATASOURCE_PASSWORD
               value: postgres
-            - name: spring.datasource.url
-              value: jdbc:postgresql://host.docker.internal:5455/my_docker_ass_database
-            - name: spring.datasource.username
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://docker-database-service:5455/my_docker_ass_database
+            - name: SPRING_DATASOURCE_USERNAME
               value: postgres
-            - name: spring.jpa.hibernate.ddl-auto
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: update
-            - name: spring.jpa.properties.hibernate.dialect
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
               value: org.hibernate.dialect.PostgreSQLDialect
-          image: docker-backend-service
+          image: docker-backend-service:v4.44.4
           name: composed-docker-backend
           ports:
             - containerPort: 8080

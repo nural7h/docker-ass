@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert
+    kompose.cmd: kompose convert -o ./k8s
     kompose.version: 1.32.0 (765fde254)
   labels:
     io.kompose.service: docker-frontend-service
@@ -15,14 +15,14 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert
+        kompose.cmd: kompose convert -o ./k8s
         kompose.version: 1.32.0 (765fde254)
       labels:
         io.kompose.network/docker-ass-default: "true"
         io.kompose.service: docker-frontend-service
     spec:
       containers:
-        - image: docker-frontend-service
+        - image: docker-frontend-service:v2.22.2
           name: composed-docker-frontend
           ports:
             - containerPort: 3000

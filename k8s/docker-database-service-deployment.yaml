@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert
+    kompose.cmd: kompose convert -o ./k8s
     kompose.version: 1.32.0 (765fde254)
   labels:
     io.kompose.service: docker-database-service
@@ -12,10 +12,12 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: docker-database-service
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert
+        kompose.cmd: kompose convert -o ./k8s
         kompose.version: 1.32.0 (765fde254)
       labels:
         io.kompose.network/docker-ass-default: "true"
@@ -29,10 +31,17 @@ spec:
               value: postgres
             - name: POSTGRES_USER
               value: postgres
-          image: docker-database-service
+          image: docker-database-service:v3.33.3
           name: composed-docker-database
           ports:
             - containerPort: 5432
               hostPort: 5455
               protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: docker-database-data
       restartPolicy: Always
+      volumes:
+        - name: docker-database-data
+          persistentVolumeClaim:
+            claimName: docker-database-data
