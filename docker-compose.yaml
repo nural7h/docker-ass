@@ -1,50 +1,53 @@
-version: "3.8"
+version: "3.9"
 services:
-  docker_database_service:
-    restart: always
+  docker-database-service:
+    image: docker-database-service:v3.33.3
     build:
       context: ./DOCKER_DATABASE
-    container_name: composed_docker_database
+    restart: always
+    container_name: composed-docker-database
     ports:
       - "5455:5432"
+    volumes:
+      - docker-database-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: my_docker_ass_database
-  
-  docker_backend_service:
+
+  docker-backend-service:
+    image: docker-backend-service:v4.44.4
     build:
       context: ./DOCKER_BACKEND
-      
-    container_name: composed_docker_backend
+
+    container_name: composed-docker-backend
 
     ports:
       - "8080:8080"
 
     depends_on:
-      - docker_database_service
-    
+      - docker-database-service
+
     environment:
-      - spring.datasource.url=jdbc:postgresql://host.docker.internal:5455/my_docker_ass_database
-      - spring.datasource.username=postgres
-      - spring.datasource.password=postgres
-      - spring.application.name=doc-ass
-      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-      - spring.jpa.hibernate.ddl-auto=update
-    
-  docker_frontend_service:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://docker-database-service:5455/my_docker_ass_database
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_APPLICATION_NAME=doc-ass
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  docker-frontend-service:
+    image: docker-frontend-service:v2.22.2
     build:
       context: ./DOCKER_FRONTEND/my-app
-
-    depends_on:
-      - docker_backend_service
 
     ports:
       - "3000:3000"
 
-    container_name: composed_docker_frontend
+    container_name: composed-docker-frontend
 
-
-
-
-
+    depends_on:
+      - docker-backend-service
+volumes:
+  docker-database-data:
+    driver: local

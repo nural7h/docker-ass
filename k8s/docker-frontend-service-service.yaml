@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o ./k8s
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: docker-frontend-service
+  name: docker-frontend-service
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 3000
+      targetPort: 3000
+  selector:
+    io.kompose.service: docker-frontend-service
+  type: LoadBalancer
